@@ -1,0 +1,25 @@
+name: latlong
+description: Add your description for LatLong
+author: Mike Mitterer office@mikemitterer.at
+homepage: https://github.com/Mike Mitterer/dart-LatLong
+
+version: 1.0.0
+
+environment:
+  sdk: '>=1.0.0 <2.0.0'
+
+dependencies:
+  browser: any
+
+  logging: any
+  logging_handlers: any
+  console_log_handler: any
+
+  validate: any
+
+  args: any
+  yaml: any
+
+dev_dependencies:
+  test: any
+  grinder: any
