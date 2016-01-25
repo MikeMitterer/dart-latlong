@@ -1,5 +1,17 @@
-# LatLong provides a simple, lightweight library for common latitude and longitude calculation needs in Dart
+# LatLong provides a lightweight library for common latitude and longitude calculation.
 
+## Basic usage
+```dart
+    final Distance distance = new Distance();
+    
+    expect(distance.vincenty(new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),422592.0);
+    
+    expect(distance(new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),422592.0);
+    
+    expect(distance.as(LengthUnit.Kilometer,
+        new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),423.0);
+                    
+```
 ## Features and bugs
 Please file feature requests and bugs at the [issue tracker](https://github.com/MikeMitterer/dart-latlong/issues).
 

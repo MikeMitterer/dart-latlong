@@ -63,6 +63,11 @@ main() {
                 final Distance distance = new Distance();
 
                 expect(distance.vincenty(new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),422592.0);
+
+                expect(distance(new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),422592.0);
+
+                expect(distance.as(LengthUnit.Kilometer,
+                    new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),423.0);
             });
 
         }); // End of 'Vincenty' group
