@@ -1,24 +1,21 @@
 name: latlong
-description: Add your description for LatLong
+description: Lightweight library for common latitude and longitude calculation
 author: Mike Mitterer office@mikemitterer.at
-homepage: https://github.com/Mike Mitterer/dart-LatLong
+homepage: https://github.com/Mike Mitterer/dart-latlong
 
 version: 0.1.0
 
 environment:
-  sdk: '>=1.0.0 <2.0.0'
+  sdk: ">=1.8.0 <2.0.0"
 
 dependencies:
-  browser: any
+  browser: ^0.10.0
 
-  logging: any
-  logging_handlers: any
-  console_log_handler: any
+  logging: ^0.11.0
+  logging_handlers: ^0.8.0
+  console_log_handler: ^0.1.0
 
-  validate: any
-
-  args: any
-  yaml: any
+  validate: ^1.0.0
 
 dev_dependencies:
   test: any

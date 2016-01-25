@@ -19,7 +19,7 @@ test() {
 @Task()
 analyze() {
     final List<String> libs = [
-        "lib/LatLong.dart"
+        "lib/latlong.dart"
     ];
 
     libs.forEach((final String lib) => Analyzer.analyze(lib));
