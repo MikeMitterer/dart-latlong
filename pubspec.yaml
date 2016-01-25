@@ -3,7 +3,7 @@ description: Add your description for LatLong
 author: Mike Mitterer office@mikemitterer.at
 homepage: https://github.com/Mike Mitterer/dart-LatLong
 
-version: 1.0.0
+version: 0.1.0
 
 environment:
   sdk: '>=1.0.0 <2.0.0'

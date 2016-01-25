@@ -1,5 +1,5 @@
-# Changelog
+# Change Log for latlong
+Add your description for LatLong
 
-## 0.0.1
 
-- Initial version, created by StageDive
+This CHANGELOG.md was generated with [**Changelog for Dart**](https://pub.dartlang.org/packages/changelog)
