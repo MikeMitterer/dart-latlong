@@ -24,7 +24,7 @@ main() {
         test('> isInside - distance from 0.0,0.0 to 1.0,0.0 is 111319 meter (based on Haversine)', () {
             final Circle circle = new Circle(new LatLng(0.0,0.0), 111319.0);
             final LatLng newPos = new LatLng(1.0,0.0);
-            final double dist = new Distance(algorithm: distanceWithHaversine).distance(circle.center,newPos);
+            // final double dist = new Distance(algorithm: distanceWithHaversine).distance(circle.center,newPos);
 
             expect(circle.isPointInside(newPos),isTrue);
 

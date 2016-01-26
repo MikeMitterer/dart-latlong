@@ -201,7 +201,7 @@ double distanceWithVincenty(final LatLng p1, final LatLng p2,final double radius
     } while ((lambda - lambdaP).abs() > 1e-12 && --maxIterations > 0);
 
     if (maxIterations == 0) {
-        return distanceWithHaversine(p1,p2, radius: a); // formula failed to converge
+        return distanceWithHaversine(p1,p2, a); // formula failed to converge
     }
 
     double uSq = cosSqAlpha * (a * a - b * b) / (b * b);
