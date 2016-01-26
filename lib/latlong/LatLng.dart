@@ -19,6 +19,7 @@
      
 part of latlong;
 
+/// Coordinates in Degrees
 class LatLng {
     // final Logger _logger = new Logger('latlong.LatLng');
 
@@ -34,9 +35,9 @@ class LatLng {
 
     double get longitude => _longitude;
 
-    double get latitudeInRad => _degToRad(latitude);
+    double get latitudeInRad => degToRadian(latitude);
 
-    double get longitudeInRad => _degToRad(_longitude);
+    double get longitudeInRad => degToRadian(_longitude);
 
     String toString() => 'LatLng(latitude:$latitude, longitude:$longitude)';
 
@@ -45,6 +46,4 @@ class LatLng {
     bool operator==(final LatLng other) => latitude == other.latitude && longitude == other.longitude;
 
     //- private -----------------------------------------------------------------------------------
-
-    double _degToRad(final double deg) => deg * (math.PI / 180);
 }

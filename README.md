@@ -4,19 +4,16 @@
 ```dart
 final Distance distance = new Distance();
 
-expect(
-    distance.vincenty(new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),
-        422592.0);
+// km = 423
+final int km = distance.as(LengthUnit.Kilometer,
+ new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444));
 
-expect(
-    distance(new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),
-        422592.0);
-
-expect(distance.as(LengthUnit.Kilometer,
-    new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),
-        423.0);
-                    
+// meter = 422592
+final int meter = distance(new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444));
 ```
+
+![LatLong](http://eogn.com/images/newsletter/2014/Latitude-and-longitude.png)
+
 ## Features and bugs
 Please file feature requests and bugs at the [issue tracker](https://github.com/MikeMitterer/dart-latlong/issues).
 
