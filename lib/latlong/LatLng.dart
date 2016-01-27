@@ -45,5 +45,12 @@ class LatLng {
 
     bool operator==(final LatLng other) => latitude == other.latitude && longitude == other.longitude;
 
+    LatLng round({ final int decimals: 6 })
+        => new LatLng(_round(latitude,decimals: decimals), _round(latitude,decimals: decimals));
+
     //- private -----------------------------------------------------------------------------------
+
+    /// No qualifier for top level functions in Dart. Had to copy this function
+    double _round(final double value, { final int decimals: 6 })
+        => (value * math.pow(10,decimals)).round() / math.pow(10,decimals);
 }

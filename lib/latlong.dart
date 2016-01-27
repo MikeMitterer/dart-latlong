@@ -19,7 +19,8 @@
 
 /// Helps with latitude / longitude calculations.
 ///
-/// For distance calculations the default algorithm is [distanceWithVincenty]
+/// For distance calculations the default algorithm [Vincenty] is used.
+/// [Vincenty] is a bit slower than [Haversine] but fare more accurate!
 ///
 ///      final Distance distance = new Distance();
 ///
@@ -31,6 +32,7 @@
 ///      final int meter = distance(new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444));
 ///
 /// Find more infos on [Movable Type Scripts](http://www.movable-type.co.uk/scripts/latlong.html)
+/// and [Movable Type Scripts - Vincenty](http://www.movable-type.co.uk/scripts/latlong-vincenty.html)
 ///
 /// ![LatLong](http://eogn.com/images/newsletter/2014/Latitude-and-longitude.png)
 ///
@@ -42,15 +44,29 @@ import 'dart:math' as math;
 
 import 'package:validate/validate.dart';
 
-part "latlong/LatLng.dart";
+part "latlong/interfaces.dart";
+
+part 'latlong/calculator/Haversine.dart';
+part 'latlong/calculator/Vincenty.dart';
+
 part "latlong/Distance.dart";
+part "latlong/LatLng.dart";
 part "latlong/LengthUnit.dart";
 
-part "latlong/Polygon.dart";
+part "latlong/Path.dart";
 part "latlong/Circle.dart";
 
+/// Equator radius in meter (WGS84 ellipsoid)
+const double EQUATOR_RADIUS = 6378137.0;
+
+/// Polar radius in meter (WGS84 ellipsoid)
+const double POLAR_RADIUS = 6356752.314245;
+
+/// WGS84
+const double FLATTENING = 1 / 298.257223563;
+
 /// Earth radius in meter
-const double EARTH_RADIUS = 6378137.0;
+const double EARTH_RADIUS = EQUATOR_RADIUS;
 
 /// Converts degree to radian
 double degToRadian(final double deg) => deg * (math.PI / 180.0);

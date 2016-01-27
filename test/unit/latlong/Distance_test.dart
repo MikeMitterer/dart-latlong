@@ -7,31 +7,6 @@ import 'package:latlong/latlong.dart';
 
 import '../config.dart';
 
-final List<LatLng> polygon = <LatLng>[
-    new LatLng( 51.513357512,7.45574331),
-    new LatLng( 51.515400598,7.45518541),
-    new LatLng( 51.516241842,7.456494328),
-    new LatLng( 51.516722545,7.459863183),
-    new LatLng( 51.517443592,7.463232037),
-    new LatLng( 51.5177507,7.464755532),
-    new LatLng( 51.517657233,7.466622349),
-    new LatLng( 51.51722995,7.468317505),
-    new LatLng( 51.516816015,7.47011995),
-    new LatLng( 51.516308606,7.471793648),
-    new LatLng( 51.515974782,7.472437378),
-    new LatLng( 51.515413951,7.472845074),
-    new LatLng( 51.514559338,7.472909447),
-    new LatLng( 51.512195717,7.472651955),
-    new LatLng( 51.511127373,7.47140741),
-    new LatLng( 51.51029939,7.469948288),
-    new LatLng( 51.509831973,7.468446251),
-    new LatLng( 51.509978876,7.462481019),
-    new LatLng( 51.510913701,7.460678574),
-    new LatLng( 51.511594777,7.459434029),
-    new LatLng( 51.512396029,7.457695958),
-    new LatLng( 51.513317451,7.45574331),
-];
-
 main() {
     // final Logger _logger = new Logger("test.Compute");
     configLogging();
@@ -98,7 +73,7 @@ main() {
 
         group('Haversine - not so accurate', () {
             test('> Test 1', () {
-                final Distance distance = new Distance(algorithm: distanceWithHaversine);
+                final Distance distance = new Distance(calculator: const Haversine());
 
                 expect(distance(new LatLng(52.518611,13.408056),new LatLng(51.519475,7.46694444)),421786.0);
             });
@@ -149,19 +124,20 @@ main() {
     }); // End of 'Direction' group
 
     group('Offset', () {
-        test('offset from 0,0 with bearing 0 and distance ~ 10.000 km is 90,0',(){
+        test('offset from 0,0 with bearing 0 and distance 10018.754 km is 90,0',(){
             final Distance distance = const Distance();
 
             final num distanceInMeter = (EARTH_RADIUS * math.PI / 2).round();
-            final num bearing = 0;
+            //print("Dist $distanceInMeter");
 
             final p1 = new LatLng(0.0, 0.0);
-            final p2 = distance.offset(p1, distanceInMeter.round(), bearing);
+            final p2 = distance.offset(p1, distanceInMeter.round(), 0);
+
+            //print(p2);
+            //print("${decimal2sexagesimal(p2.latitude)} / ${decimal2sexagesimal(p2.longitude)}");
 
             expect(p2.latitude.round(), equals(90));
-            expect(p2.longitude.round(), equals(0));
-
-            decimal2sexagesimal(3.25);
+            expect(p2.longitude.round(), equals(180));  // 0 Vincenty
         });
 
         test('offset from 0,0 with bearing 180 and distance ~ 5.000 km is -45,0',(){
@@ -182,7 +158,7 @@ main() {
             final p2 = distance.offset(p1, distanceInMeter, 180);
 
             expect(p2.latitude.round(), equals(-90));
-            expect(p2.longitude.round(), equals(0));
+            expect(p2.longitude.round(), equals(180)); // 0 Vincenty
         });
 
         test('offset from 0,0 with bearing 90 and distance ~ 5.000 km is 0,45',(){
@@ -197,31 +173,7 @@ main() {
         });
     }); // End of 'Offset' group
 
-    group('PathLength', () {
 
-        test('> Distance of empty path should be 0', () {
-            final Distance distance = const Distance();
-
-            expect(distance.pathLength([]),0);
-        }); // end of 'Distance of empty path should be 0' test
-
-        test('> Path length should be 3377m', () {
-            final Distance distance = const Distance();
-
-            expect(distance.pathLength(polygon),3377);
-
-        }); // end of 'Path length should be 3377m' test
-
-        test('> Path lenght should be 3.377km', () {
-            final Distance distance = const Distance();
-
-            expect(round(
-                LengthUnit.Meter.to(LengthUnit.Kilometer,distance.pathLength(polygon)),decimals:3)
-                    ,3.377);
-
-        }); // end of 'Path length should be 3.377km' test
-
-    }); // End of 'PathLength' group
 }
 
 // - Helper --------------------------------------------------------------------------------------

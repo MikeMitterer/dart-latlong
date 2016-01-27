@@ -22,16 +22,16 @@ part of latlong;
 
 /// Circle-base GEO algorithms.
 ///
-/// Circle use by default the Haversine-Algorithm for distance computations
+/// Circle uses by default the Vincenty-Algorithm for distance computations
 class Circle {
     // final Logger _logger = new Logger('latlong.Circle');
 
     final double radius;
     final LatLng center;
-    final DistanceAlgorithm _algorithm;
+    final DistanceCalculator _calculator;
 
-    Circle(final LatLng this.center, this.radius, { final DistanceAlgorithm algorithm: distanceWithHaversine })
-        : _algorithm = algorithm;
+    Circle(final LatLng this.center, this.radius, { final DistanceCalculator calculator: const Vincenty() })
+        : _calculator = calculator;
 
     /// Checks if a [point] is inside the given [Circle]
     ///
@@ -47,7 +47,7 @@ class Circle {
     bool isPointInside(final LatLng point) {
         Validate.notNull(point);
 
-        final Distance distance = new Distance(algorithm: _algorithm);
+        final Distance distance = new Distance(calculator: _calculator);
 
         final double dist = distance(center, point);
         return dist <= radius;
