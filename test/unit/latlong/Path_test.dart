@@ -145,10 +145,18 @@ main() {
 
             final Path steps = path.createIntermediateSteps(30);
 
-            print("latitude,longitude");
-            for(int index = 0;index < steps.nrOfCoordinates;index++) {
-                print("${steps[index].latitude}, ${steps[index].longitude}");
+            // 282 / 30 = 9 + first + last
+            expect(steps.coordinates.length, 11);
+
+            double sumDist = 0.0;
+            for(int index = 0;index < steps.nrOfCoordinates - 1;index++) {
+                sumDist += distance(steps[index],steps[index + 1]);
             }
+
+            // print("latitude,longitude");
+            // for(int index = 0;index < steps.nrOfCoordinates;index++) {
+            //    print("${steps[index].latitude}, ${steps[index].longitude}");
+            // }
 
         }); // end of 'ZigZag' test
 

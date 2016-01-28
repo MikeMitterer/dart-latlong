@@ -50,60 +50,78 @@ class Path {
         Validate.isTrue(baseLength >= stepDistance,
             "Path distance must be at least ${stepDistance}mn (step distance) but was ${baseLength}");
 
+        // no steps possible - so return an empty path
         if(baseLength == stepDistance) {
-            return new Path.from(_coordinates);
+            return new Path.from([ _coordinates.first, _coordinates.last ]);
         }
 
         final List<LatLng> tempCoordinates = new List.from(_coordinates);
         final Path path = new Path();
 
         double restSteps = 0.0;
-        double restBearing = 0.0;
         double bearing;
 
         path.add(tempCoordinates.first);
         LatLng baseStep = tempCoordinates.first;
 
+        CatmullRomSpline2D<double> _createSpline(final int index) {
+            if(index == 0) {
+                return new CatmullRomSpline2D.noEndpoints(
+                    new Point2D(tempCoordinates[0].latitude,tempCoordinates[0].longitude),
+                    new Point2D(tempCoordinates[1].latitude,tempCoordinates[1].longitude));
+
+            } else if(index >= tempCoordinates.length - 2) {
+                return new CatmullRomSpline2D.noEndpoints(
+                    new Point2D(tempCoordinates[index - 1].latitude,tempCoordinates[index - 1].longitude),
+                    new Point2D(tempCoordinates.last.latitude,tempCoordinates.last.longitude));
+            }
+            return new CatmullRomSpline2D(
+                new Point2D(tempCoordinates[index - 1].latitude,tempCoordinates[index - 1].longitude),
+                new Point2D(tempCoordinates[index].latitude,tempCoordinates[index].longitude),
+                new Point2D(tempCoordinates[index + 1].latitude,tempCoordinates[index + 1].longitude),
+                new Point2D(tempCoordinates[index + 2].latitude,tempCoordinates[index + 2].longitude)
+            );
+        }
+
         for(int index = 0;index < coordinates.length - 1;index++) {
             final double distance = _distance(tempCoordinates[index],tempCoordinates[index + 1]);
+            CatmullRomSpline2D<double> spline = _createSpline(index);
 
             bearing = _distance.bearing(tempCoordinates[index],tempCoordinates[index + 1]);
-            bearing += restBearing;
 
-            final double steps = (distance + (restSteps * stepDistance)) / stepDistance;
+            if(restSteps <= distance || (stepDistance - restSteps) <= distance) {
 
-            final int fullSteps = steps.toInt();
-            restSteps = fullSteps > 0 ? steps % fullSteps : steps;
+                double firstStepPos = stepDistance - restSteps;
 
-            baseStep = path.coordinates.last;
-            int stepCounter = 0;
-            for(; stepCounter < fullSteps;stepCounter++) {
-                final LatLng nextStep = _distance.offset(baseStep,stepDistance,bearing);
-                path.add(nextStep);
-                baseStep = nextStep;
-                restBearing = 0.0;
+                final double steps = ((distance - firstStepPos) / stepDistance) + 1;
+
+                final int fullSteps = steps.toInt();
+                restSteps = round(fullSteps > 0 ? steps % fullSteps : steps,decimals: 6) * stepDistance;
+
+                baseStep = tempCoordinates[index];
+                int stepCounter = 0;
+                for(; stepCounter < fullSteps;stepCounter++) {
+    //                final double percent = firstStep * 100 / distance;
+    //
+    //                if(percent > 100.0) {
+    //                    restSteps += ((percent - 100) / 100) * stepDistance;
+    //                    continue;
+    //                }
+
+                    //final Point2D<double> point = spline.percentage(percent);
+
+                    final LatLng nextStep = _distance.offset(baseStep,firstStepPos,bearing);
+                    //final LatLng nextStep = new LatLng(point.x,point.y);
+                    path.add(nextStep);
+                    //baseStep = nextStep;
+
+                    firstStepPos += stepDistance;
+                }
+
+            } else {
+                restSteps += distance;
             }
 
-            if(stepCounter == 0) {
-                restBearing -= bearing;
-            }
-
-//            if(restSteps.toInt() > 0) {
-//                final LatLng nextFixStep = tempCoordinates[index + 1];
-//                final double sectionDistance = _distance(baseStep,nextFixStep);
-//                final double remainingDistance = sectionDistance + (restSteps * stepDistance);
-//                final double steps = remainingDistance / stepDistance;
-//
-//                int fullSteps = steps.toInt();
-//
-//                final double posDistance = stepDistance - (remainingDistance - sectionDistance);
-//                restSteps = steps % fullSteps;
-//
-//                final LatLng nextStep = _distance.offset(baseStep,posDistance,bearing);
-//                path.add(nextStep);
-//                baseStep = nextStep;
-//                fullSteps--;
-//            }
         }
 
         // If last step is on the same position as the last generated step
