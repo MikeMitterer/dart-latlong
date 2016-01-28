@@ -101,17 +101,17 @@ class Path {
                 baseStep = tempCoordinates[index];
                 int stepCounter = 0;
                 for(; stepCounter < fullSteps;stepCounter++) {
-    //                final double percent = firstStep * 100 / distance;
+                    final double percent = firstStepPos * 100 / distance;
     //
     //                if(percent > 100.0) {
     //                    restSteps += ((percent - 100) / 100) * stepDistance;
     //                    continue;
     //                }
 
-                    //final Point2D<double> point = spline.percentage(percent);
+                    final Point2D<double> point = spline.percentage(percent);
 
-                    final LatLng nextStep = _distance.offset(baseStep,firstStepPos,bearing);
-                    //final LatLng nextStep = new LatLng(point.x,point.y);
+                    //final LatLng nextStep = _distance.offset(baseStep,firstStepPos,bearing);
+                    final LatLng nextStep = new LatLng(point.x,point.y);
                     path.add(nextStep);
                     //baseStep = nextStep;
 
