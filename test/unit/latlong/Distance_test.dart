@@ -124,7 +124,7 @@ main() {
     }); // End of 'Direction' group
 
     group('Offset', () {
-        test('offset from 0,0 with bearing 0 and distance 10018.754 km is 90,0',(){
+        test('offset from 0,0 with bearing 0 and distance 10018.754 km is 90,180',(){
             final Distance distance = const Distance();
 
             final num distanceInMeter = (EARTH_RADIUS * math.PI / 2).round();
@@ -137,7 +137,7 @@ main() {
             //print("${decimal2sexagesimal(p2.latitude)} / ${decimal2sexagesimal(p2.longitude)}");
 
             expect(p2.latitude.round(), equals(90));
-            expect(p2.longitude.round(), equals(180));  // 0 Vincenty
+            expect(p2.longitude.round(), equals(180));
         });
 
         test('offset from 0,0 with bearing 180 and distance ~ 5.000 km is -45,0',(){
@@ -146,11 +146,15 @@ main() {
 
             final p1 = new LatLng(0.0, 0.0);
             final p2 = distance.offset(p1, distanceInMeter, 180);
+
+            // print(p2.round());
+            // print(p2.toSexagesimal());
+
             expect(p2.latitude.round(), equals(-45));
             expect(p2.longitude.round(), equals(0));
         });
 
-        test('offset from 0,0 with bearing 180 and distance ~ 10.000 km is -90,0',(){
+        test('offset from 0,0 with bearing 180 and distance ~ 10.000 km is -90,180',(){
             final Distance distance = const Distance();
             final num distanceInMeter = (EARTH_RADIUS * math.PI / 2).round();
 

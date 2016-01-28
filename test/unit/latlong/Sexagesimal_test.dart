@@ -25,6 +25,9 @@ main() async {
             expect(sexa2, '19° 22\' 32.00"');
             expect(sexa3, '50° 0\' 0.00"');
 
+            final LatLng p1 = new LatLng(51.519475, -19.37555556);
+            expect(p1.toSexagesimal(), '51° 31\' 10.11" N, 19° 22\' 32.00" W');
+
         }); // end of 'decimal2sexagesimal' test
 
     });

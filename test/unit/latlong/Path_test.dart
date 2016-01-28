@@ -36,6 +36,39 @@ final List<LatLng> route = <LatLng>[
     new LatLng( 51.513317451,7.45574331),
 ];
 
+final List<LatLng> westendorf = <LatLng>[
+    new LatLng(47.43074295001961,12.21235112213462),
+    new LatLng(47.43089093351458,12.21272597555608),
+    new LatLng(47.43112096728846,12.21318739290575),
+    new LatLng(47.43136362193013,12.21357041557469),
+    new LatLng(47.43151718768905,12.21381341692645),
+    new LatLng(47.43165029999054,12.2140511609222),
+    new LatLng(47.43197227207169,12.21443856698021),
+];
+
+final List<LatLng> zigzag = <LatLng>[
+    new LatLng(47.43082546234226,12.21255804885847),
+    new LatLng(47.43103958915331,12.21268605330973),
+    new LatLng(47.43105710900187,12.21307899558343),
+    new LatLng(47.43122940724644,12.21334560213179),
+    new LatLng(47.43140402736853,12.21345312442578),
+    new LatLng(47.43145463473182,12.21370919972242),
+    new LatLng(47.43152498372309,12.21383217398376),
+    new LatLng(47.43154236046533,12.213861433609),
+    new LatLng(47.43156491014229,12.21389982585238),
+    new LatLng(47.43170715787343,12.21411329481371),
+    new LatLng(47.4316056796912,12.21427241091704),
+    new LatLng(47.43148429441857,12.21439779676563),
+    new LatLng(47.43144240029867,12.21446788249065),
+    new LatLng(47.43150069195054,12.21456420272734),
+    new LatLng(47.4315919174373,12.21469743884608),
+    new LatLng(47.43163947608171,12.21477097582562),
+    new LatLng(47.43171300672132,12.21474044606232),
+    new LatLng(47.43178565483553,12.21464852517297),
+    new LatLng(47.43186412401507,12.21455971070946),
+    new LatLng(47.43196361890569,12.21443596175264)
+];
+
 main() {
     // final Logger _logger = new Logger("test.Utils");
     
@@ -62,9 +95,62 @@ main() {
                 expect(distance(steps[index],steps[index + 1]), 100);
             }
 
-        }); // end of '10 intermediate steps in 1000m should have the same length' test
+        }, skip: "aaaa"); // end of '10 intermediate steps in 1000m should have the same length' test
 
+        test('> Path with 3 sections', () {
 
+            final Distance distance = new Distance();
+            final LatLng startPos = new LatLng(0.0,0.0);
+            final LatLng pos1 = distance.offset(startPos,50,0);
+            final LatLng pos2 = distance.offset(pos1,15,0);
+            final LatLng pos3 = distance.offset(pos2,5,0);
+
+            expect(distance(startPos,pos3),70);
+
+            final Path path = new Path.from(<LatLng>[ startPos, pos1, pos2, pos3]);
+            expect(path.length,70);
+
+            final Path steps = path.createIntermediateSteps(30);
+
+            for(int index = 0;index < steps.nrOfCoordinates - 1;index++) {
+                print("${steps[index].round()} -> ${steps[index + 1].round()} : ${distance(steps[index],steps[index + 1])}m");
+            }
+
+        }, skip: "bbbbb"); // end of 'Path with 3 sections' test
+
+        test('> Reality Test - Westendorf, short, should 210m (same as Google Earth)', () {
+            final Path path = new Path.from(westendorf);
+            expect(path.length,210);
+
+            // first point to last point!
+            final Distance distance = new Distance();
+            expect(distance(westendorf.first,westendorf.last),209);
+
+            final Path steps = path.createIntermediateSteps(5);
+            for(int index = 0;index < steps.nrOfCoordinates;index++) {
+                print("${steps[index].longitude}, ${steps[index].latitude}");
+            }
+
+        }, skip: "cccc"); // end of 'Reality Test - Westendorf, short' test
+
+        test('> ZigZag, according to Google-Earth - 282m,'
+                'first to last point 190m (acc. movable-type.co.uk (Haversine)', () {
+
+            final Path path = new Path.from(zigzag);
+            expect(path.length,282);
+
+            // first point to last point!
+            final Distance distance = new Distance();
+            expect(distance(zigzag.first,zigzag.last),190);
+
+            final Path steps = path.createIntermediateSteps(30);
+
+            print("latitude,longitude");
+            for(int index = 0;index < steps.nrOfCoordinates;index++) {
+                print("${steps[index].latitude}, ${steps[index].longitude}");
+            }
+
+        }); // end of 'ZigZag' test
 
     }); // End of 'Intermediate steps' group
 

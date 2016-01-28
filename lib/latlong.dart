@@ -89,7 +89,7 @@ double normalizeBearing(final double bearing) => (bearing + 360) % 360;
 ///
 String decimal2sexagesimal(final double dec) {
     List<int> _split(final double value) {
-        final List<String> tmp = value.toString().split('.');
+        final List<String> tmp = round(value,decimals: 10).toString().split('.');
         return <int>[ int.parse(tmp[0]).abs(), int.parse(tmp[1])];
     }
 
@@ -105,5 +105,5 @@ String decimal2sexagesimal(final double dec) {
 
     final double sec = (double.parse("0.${minFractionalPart}") * 60);
 
-    return "${deg}° ${min.floor()}' ${sec.toStringAsFixed(2)}\"";
+    return "${deg}° ${min.floor()}' ${round(sec,decimals: 2).toStringAsFixed(2)}\"";
 }

@@ -40,13 +40,18 @@ class LatLng {
     double get longitudeInRad => degToRadian(_longitude);
 
     String toString() => 'LatLng(latitude:$latitude, longitude:$longitude)';
+    String toSexagesimal() {
+        String latDirection = latitude >= 0 ? "N" : "S";
+        String lonDirection = longitude >= 0 ? "O" : "W";
+        return "${decimal2sexagesimal(latitude)} ${latDirection}, ${decimal2sexagesimal(longitude)} ${lonDirection}";
+    }
 
     int get hashCode => latitude.hashCode + longitude.hashCode;
 
     bool operator==(final LatLng other) => latitude == other.latitude && longitude == other.longitude;
 
     LatLng round({ final int decimals: 6 })
-        => new LatLng(_round(latitude,decimals: decimals), _round(latitude,decimals: decimals));
+        => new LatLng(_round(latitude,decimals: decimals), _round(longitude,decimals: decimals));
 
     //- private -----------------------------------------------------------------------------------
 

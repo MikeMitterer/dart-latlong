@@ -57,26 +57,53 @@ class Path {
         final List<LatLng> tempCoordinates = new List.from(_coordinates);
         final Path path = new Path();
 
+        double restSteps = 0.0;
+        double restBearing = 0.0;
+        double bearing;
+
         path.add(tempCoordinates.first);
         LatLng baseStep = tempCoordinates.first;
+
         for(int index = 0;index < coordinates.length - 1;index++) {
             final double distance = _distance(tempCoordinates[index],tempCoordinates[index + 1]);
-            final double bearing = _distance.bearing(tempCoordinates[index],tempCoordinates[index + 1]);
 
-            final double splitDistance = distance / stepDistance;
+            bearing = _distance.bearing(tempCoordinates[index],tempCoordinates[index + 1]);
+            bearing += restBearing;
 
-            final int fullSteps = splitDistance.toInt();
-            final double restSteps = fullSteps > 0 ? splitDistance % fullSteps : splitDistance;
+            final double steps = (distance + (restSteps * stepDistance)) / stepDistance;
 
-            baseStep = tempCoordinates[index];
-            for(int stepCounter = 0; stepCounter < fullSteps;stepCounter++) {
+            final int fullSteps = steps.toInt();
+            restSteps = fullSteps > 0 ? steps % fullSteps : steps;
+
+            baseStep = path.coordinates.last;
+            int stepCounter = 0;
+            for(; stepCounter < fullSteps;stepCounter++) {
                 final LatLng nextStep = _distance.offset(baseStep,stepDistance,bearing);
                 path.add(nextStep);
                 baseStep = nextStep;
+                restBearing = 0.0;
             }
-            double steps = 0.0;
 
-            //if()
+            if(stepCounter == 0) {
+                restBearing -= bearing;
+            }
+
+//            if(restSteps.toInt() > 0) {
+//                final LatLng nextFixStep = tempCoordinates[index + 1];
+//                final double sectionDistance = _distance(baseStep,nextFixStep);
+//                final double remainingDistance = sectionDistance + (restSteps * stepDistance);
+//                final double steps = remainingDistance / stepDistance;
+//
+//                int fullSteps = steps.toInt();
+//
+//                final double posDistance = stepDistance - (remainingDistance - sectionDistance);
+//                restSteps = steps % fullSteps;
+//
+//                final LatLng nextStep = _distance.offset(baseStep,posDistance,bearing);
+//                path.add(nextStep);
+//                baseStep = nextStep;
+//                fullSteps--;
+//            }
         }
 
         // If last step is on the same position as the last generated step
