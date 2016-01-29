@@ -16,7 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-     
+
+/// Splines are most commonly used to draw a curve
+/// line when a set of given points exists, which needs to be joined smoothly.
+///
+/// More about the [algorithm](http://www.dxstudio.com/guide_content.aspx?id=70a2b2cf-193e-4019-859c-28210b1da81f)
+/// and [here](http://www.mvps.org/directx/articles/catmull/).
+///
+/// Java way: [A Catmull Rom Spline (curve) Implementation in Java](http://hawkesy.blogspot.co.at/2010/05/catmull-rom-spline-curve-implementation.html)
+///
 library spline;
 
 import 'dart:async';

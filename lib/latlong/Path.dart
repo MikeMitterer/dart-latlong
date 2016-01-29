@@ -21,6 +21,8 @@ part of latlong;
 
 /// Path of [LatLng] values
 class Path {
+    final Logger _logger = new Logger('latlong.Path');
+
     /// Coordinates managed by this class
     final List<LatLng> _coordinates;
 
@@ -35,20 +37,50 @@ class Path {
 
     List<LatLng> get coordinates => _coordinates;
 
+    /// Removes all coordinates from path
     void clear() => _coordinates.clear();
 
+    /// Add new [LatLng] coordinate to path
     void add(final LatLng value) {
         Validate.notNull(value);
         return _coordinates.add(value);
     }
 
-    Path createIntermediateSteps(final int stepDistance) {
-        Validate.isTrue(stepDistance > 1, "Distance must be greater than 1");
-        Validate.isTrue(_coordinates.length >= 2,"At least 2 coordinates are needed to create the steps in between");
+    LatLng get first => _coordinates.first;
+    LatLng get last => _coordinates.last;
 
-        final double baseLength = length;
+    /// Splits the path into even sections.
+    ///
+    /// The section size is defined with [distanceInMeterPerTime].
+    /// [distanceInMeterPerTime] means that the original size on the given
+    /// path will stay the same but the create section could be smaller because of the "linear distance"
+    ///
+    /// However - if you follow the steps in a given time then the distance from point to point (over time)
+    /// is correct. (Almost - because of the curves generate with [CatmullRomSpline2D]
+    ///
+    ///     final Path path = new Path.from(zigzag);
+    ///
+    /// If [smoothPath] is turned on than the minimum of 3 coordinates is required otherwise
+    /// we need two
+    Path equalize(final int distanceInMeterPerTime,{ final bool smoothPath: true }) {
+        Validate.isTrue(distanceInMeterPerTime > 1, "Distance must be greater than 1");
+        Validate.isTrue((smoothPath && _coordinates.length >= 3) ||
+            (!smoothPath&& _coordinates.length >= 2),
+                "At least ${smoothPath ? 3 : 2} coordinates are needed to create the steps in between");
+
+
+        // If we "smooth" the path every second step becomes a spline - so every other step
+        // becomes a "Keyframe". A step on the given path
+        final double stepDistance = smoothPath ? distanceInMeterPerTime * 2.0 : distanceInMeterPerTime.toDouble();
+
+        final double baseLength = distance;
         Validate.isTrue(baseLength >= stepDistance,
             "Path distance must be at least ${stepDistance}mn (step distance) but was ${baseLength}");
+
+        if(stepDistance > baseLength / 2) {
+            _logger.warning("Equalizing the path (L: $baseLength) with a key-frame distance of $stepDistance leads to"
+                "weired results. Turn of path smooting.");
+        }
 
         // no steps possible - so return an empty path
         if(baseLength == stepDistance) {
@@ -58,7 +90,7 @@ class Path {
         final List<LatLng> tempCoordinates = new List.from(_coordinates);
         final Path path = new Path();
 
-        double restSteps = 0.0;
+        double remainingSteps = 0.0;
         double bearing;
 
         path.add(tempCoordinates.first);
@@ -67,75 +99,88 @@ class Path {
         for(int index = 0;index < coordinates.length - 1;index++) {
             final double distance = _distance(tempCoordinates[index],tempCoordinates[index + 1]);
 
+            // Remember the direction
             bearing = _distance.bearing(tempCoordinates[index],tempCoordinates[index + 1]);
 
-            if(restSteps <= distance || (stepDistance - restSteps) <= distance) {
+            if(remainingSteps <= distance || (stepDistance - remainingSteps) <= distance) {
 
-                double firstStepPos = stepDistance - restSteps;
+                // First step position
+                double firstStepPos = stepDistance - remainingSteps;
 
                 final double steps = ((distance - firstStepPos) / stepDistance) + 1;
 
                 final int fullSteps = steps.toInt();
-                restSteps = round(fullSteps > 0 ? steps % fullSteps : steps,decimals: 6) * stepDistance;
+                remainingSteps = round(fullSteps > 0 ? steps % fullSteps : steps,decimals: 6) * stepDistance;
 
                 baseStep = tempCoordinates[index];
 
-                int stepCounter = 0;
-                for(; stepCounter < fullSteps;stepCounter++) {
+                for(int stepCounter = 0; stepCounter < fullSteps;stepCounter++) {
+                    // Add step on the given path
                     final LatLng nextStep = _distance.offset(baseStep,firstStepPos,bearing);
                     path.add(nextStep);
                     firstStepPos += stepDistance;
 
-                    CatmullRomSpline2D<double> spline;
+                    if(smoothPath) {
+                        // Now - split it
+                        CatmullRomSpline2D<double> spline;
 
-                    if(path.nrOfCoordinates == 3) {
-                        spline = _createSpline(path[0],path[0],path[1],path[2]);
+                        if(path.nrOfCoordinates == 3) {
+                            spline = _createSpline(path[0],path[0],path[1],path[2]);
 
-                        // Insert new point between 0 and 1
-                        path.coordinates.insert(1,_pointToLatLng(spline.percentage(50)));
+                            // Insert new point between 0 and 1
+                            path.coordinates.insert(1,_pointToLatLng(spline.percentage(50)));
 
-                    } else if(path.nrOfCoordinates > 3) {
-                        final int baseIndex = path.nrOfCoordinates - 1;
-                        spline = _createSpline(
-                            path[baseIndex - 3],
-                            path[baseIndex - 2],
-                            path[baseIndex - 1],
-                            path[baseIndex]);
+                        } else if(path.nrOfCoordinates > 3) {
+                            final int baseIndex = path.nrOfCoordinates - 1;
+                            spline = _createSpline(
+                                path[baseIndex - 3], path[baseIndex - 2], path[baseIndex - 1], path[baseIndex]);
 
-                        // Insert new point at last position - 2 (pushes the next 2 items down)
-                        path.coordinates.insert(baseIndex - 1,_pointToLatLng(spline.percentage(50)));
+                            // Insert new point at last position - 2 (pushes the next 2 items down)
+                            path.coordinates.insert(baseIndex - 1,_pointToLatLng(spline.percentage(50)));
+                        }
                     }
                 }
 
             } else {
-                restSteps += distance;
+                remainingSteps += distance;
             }
         }
 
         // If last step is on the same position as the last generated step
         // then don't add the last base step.
-        if(baseStep.round() != tempCoordinates.last.round()) {
+        if(baseStep.round() != tempCoordinates.last.round() &&
+            baseStep.round() != tempCoordinates.first.round() &&
+            round(_distance(baseStep,tempCoordinates.last)) > 1) {
             path.add(tempCoordinates.last);
         }
 
-        int baseIndex = path.nrOfCoordinates - 1;
-        CatmullRomSpline2D<double> spline = _createSpline(
-            path[baseIndex - 3],
-            path[baseIndex - 2],
-            path[baseIndex - 1],
-            path[baseIndex - 0]);
+        if(smoothPath) {
 
-        path.coordinates.insert(baseIndex - 1,_pointToLatLng(spline.percentage(50)));
+            // Last Spline between the last 4 elements
+            int baseIndex = path.nrOfCoordinates - 1;
+            if(baseIndex > 3) {
+                final CatmullRomSpline2D<double> spline = _createSpline(
+                    path[baseIndex - 3], path[baseIndex - 2], path[baseIndex - 1], path[baseIndex - 0]
+                );
 
-        if(restSteps > stepDistance / 2) {
+                path.coordinates.insert(baseIndex - 1,_pointToLatLng(spline.percentage(50)));
+            }
+
+            // Check if there is a remaining gap between the last two elements - close it
+            // Could be because of reminder from path divisions
             baseIndex = path.nrOfCoordinates - 1;
-            spline = _createSpline(
-                path[baseIndex - 1],path[baseIndex - 1],
-                path[baseIndex - 0],path[baseIndex - 0]);
+            if(_distance(path[baseIndex - 1],path[baseIndex]) >= stepDistance) {
 
-            path.coordinates.insert(baseIndex,_pointToLatLng(spline.percentage(50)));
+                final CatmullRomSpline2D<double> spline = _createSpline(
+                    path[baseIndex - 1],path[baseIndex - 1],
+                    path[baseIndex - 0],path[baseIndex - 0]);
+
+                path.coordinates.insert(baseIndex,_pointToLatLng(spline.percentage(50)));
+            }
         }
 
+        // Make sure we have no duplicates!
+        // _removeDuplicates();
         return path;
     }
 
@@ -144,7 +189,7 @@ class Path {
     ///     final Path path = new Path.from(route);
     ///     print(path.length);
     ///
-    num get length {
+    num get distance {
         final List<LatLng> tempCoordinates = new List.from(_coordinates);
         double length = 0.0;
 
@@ -205,6 +250,7 @@ class Path {
 
     //- private -----------------------------------------------------------------------------------
 
+    /// 4 Points are necessary to create a [CatmullRomSpline2D]
     CatmullRomSpline2D<double> _createSpline(final LatLng p0,final LatLng p1,final LatLng p2,final LatLng p3) {
         Validate.notNull(p0);
         Validate.notNull(p1);
@@ -219,6 +265,13 @@ class Path {
         );
     }
 
+    /// Convert [Point2D] to [LatLng]
     LatLng _pointToLatLng(final Point2D point) => new LatLng(point.x,point.y);
+
+    void _removeDuplicates() {
+        final Set<LatLng> temp = new Set<LatLng>.from(_coordinates);
+        _coordinates.clear();
+        _coordinates.addAll(temp);
+    }
 }
 

@@ -42,8 +42,9 @@ library latlong;
 
 import 'dart:math' as math;
 
-import 'package:validate/validate.dart';
 import 'package:latlong/spline.dart';
+import 'package:logging/logging.dart';
+import 'package:validate/validate.dart';
 
 part "latlong/interfaces.dart";
 

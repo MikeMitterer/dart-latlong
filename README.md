@@ -4,6 +4,10 @@ This library supports both, the "Haversine" and the "Vincenty" algorithm.
 
 "Haversine" is a bit faster but "Vincenty" is far more accurate!
  
+![latlong](https://github.com/MikeMitterer/dart-latlong/raw/master/doc/images/latlong.jpg) 
+
+[Catmull-Rom algorithm](http://hawkesy.blogspot.co.at/2010/05/catmull-rom-spline-curve-implementation.html) is used for smoothing out the path.
+ 
 ## Basic usage 
 
 ### Distance
@@ -38,7 +42,16 @@ This library supports both, the "Haversine" and the "Vincenty" algorithm.
             
 ```
 
-![LatLong](http://eogn.com/images/newsletter/2014/Latitude-and-longitude.png)
+## Path smoothing
+```dart
+    // zigzag is a list of coordinates
+    final Path path = new Path.from(zigzag);
+    
+    // Result is below
+    final Path steps = path.equalize(8,smoothPath: true);
+```
+![latlong](https://github.com/MikeMitterer/dart-latlong/raw/master/doc/images/smooth-path.jpg) 
+
 
 ## Features and bugs
 Please file feature requests and bugs at the [issue tracker](https://github.com/MikeMitterer/dart-latlong/issues).
