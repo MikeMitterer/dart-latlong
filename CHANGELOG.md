@@ -1,6 +1,15 @@
 # Change Log for latlong
 Lightweight library for common latitude and longitude calculation
 
+## [v0.3.0](http://github.com/mikemitterer/dart-latlong/compare/v0.2.1...v0.3.0) - 2016-01-29
+
+### Feature
+* CatmullRom added for Path-Finding [ebeeb2c](https://github.com/mikemitterer/dart-latlong/commit/ebeeb2c36e8c1368bda2e882426298e3f22c06b5)
+* Algorithms got their own class [f8a661f](https://github.com/mikemitterer/dart-latlong/commit/f8a661fa80485853f2fafe774b52fd417dbb174f)
+
+### Docs
+* Improved Readme [f030f6c](https://github.com/mikemitterer/dart-latlong/commit/f030f6cb89cb71d4ae9d29a3b7ffa13b7ea2bac8)
+
 ## [v0.2.0](http://github.com/mikemitterer/dart-latlong/compare/v0.1.2...v0.2.0) - 2016-01-26
 
 ### Feature
