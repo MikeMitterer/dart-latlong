@@ -22,28 +22,28 @@ part of latlong;
 /// Path of [LatLng] values
 class Path {
     /// Coordinates managed by this class
-    final Set<LatLng> _coordinates;
+    final List<LatLng> _coordinates;
 
     /// For [Distance] calculations
     final Distance _distance = const Distance();
 
-    Path() : _coordinates = new Set<LatLng>();
+    Path() : _coordinates = new List<LatLng>();
 
-    Path.from(final Iterable<LatLng> coordinates) : _coordinates = new Set.from(coordinates) {
+    Path.from(final Iterable<LatLng> coordinates) : _coordinates = new List.from(coordinates) {
         Validate.notNull(coordinates);
     }
 
-    Set<LatLng> get coordinates => _coordinates;
+    List<LatLng> get coordinates => _coordinates;
 
     void clear() => _coordinates.clear();
 
-    bool add(final LatLng value) {
+    void add(final LatLng value) {
         Validate.notNull(value);
         return _coordinates.add(value);
     }
 
     Path createIntermediateSteps(final int stepDistance) {
-        Validate.isTrue(stepDistance > 0, "Distance must be greater than 0");
+        Validate.isTrue(stepDistance > 1, "Distance must be greater than 1");
         Validate.isTrue(_coordinates.length >= 2,"At least 2 coordinates are needed to create the steps in between");
 
         final double baseLength = length;
@@ -64,28 +64,8 @@ class Path {
         path.add(tempCoordinates.first);
         LatLng baseStep = tempCoordinates.first;
 
-        CatmullRomSpline2D<double> _createSpline(final int index) {
-            if(index == 0) {
-                return new CatmullRomSpline2D.noEndpoints(
-                    new Point2D(tempCoordinates[0].latitude,tempCoordinates[0].longitude),
-                    new Point2D(tempCoordinates[1].latitude,tempCoordinates[1].longitude));
-
-            } else if(index >= tempCoordinates.length - 2) {
-                return new CatmullRomSpline2D.noEndpoints(
-                    new Point2D(tempCoordinates[index - 1].latitude,tempCoordinates[index - 1].longitude),
-                    new Point2D(tempCoordinates.last.latitude,tempCoordinates.last.longitude));
-            }
-            return new CatmullRomSpline2D(
-                new Point2D(tempCoordinates[index - 1].latitude,tempCoordinates[index - 1].longitude),
-                new Point2D(tempCoordinates[index].latitude,tempCoordinates[index].longitude),
-                new Point2D(tempCoordinates[index + 1].latitude,tempCoordinates[index + 1].longitude),
-                new Point2D(tempCoordinates[index + 2].latitude,tempCoordinates[index + 2].longitude)
-            );
-        }
-
         for(int index = 0;index < coordinates.length - 1;index++) {
             final double distance = _distance(tempCoordinates[index],tempCoordinates[index + 1]);
-            CatmullRomSpline2D<double> spline = _createSpline(index);
 
             bearing = _distance.bearing(tempCoordinates[index],tempCoordinates[index + 1]);
 
@@ -99,29 +79,37 @@ class Path {
                 restSteps = round(fullSteps > 0 ? steps % fullSteps : steps,decimals: 6) * stepDistance;
 
                 baseStep = tempCoordinates[index];
+
                 int stepCounter = 0;
                 for(; stepCounter < fullSteps;stepCounter++) {
-                    final double percent = firstStepPos * 100 / distance;
-    //
-    //                if(percent > 100.0) {
-    //                    restSteps += ((percent - 100) / 100) * stepDistance;
-    //                    continue;
-    //                }
-
-                    final Point2D<double> point = spline.percentage(percent);
-
-                    //final LatLng nextStep = _distance.offset(baseStep,firstStepPos,bearing);
-                    final LatLng nextStep = new LatLng(point.x,point.y);
+                    final LatLng nextStep = _distance.offset(baseStep,firstStepPos,bearing);
                     path.add(nextStep);
-                    //baseStep = nextStep;
-
                     firstStepPos += stepDistance;
+
+                    CatmullRomSpline2D<double> spline;
+
+                    if(path.nrOfCoordinates == 3) {
+                        spline = _createSpline(path[0],path[0],path[1],path[2]);
+
+                        // Insert new point between 0 and 1
+                        path.coordinates.insert(1,_pointToLatLng(spline.percentage(50)));
+
+                    } else if(path.nrOfCoordinates > 3) {
+                        final int baseIndex = path.nrOfCoordinates - 1;
+                        spline = _createSpline(
+                            path[baseIndex - 3],
+                            path[baseIndex - 2],
+                            path[baseIndex - 1],
+                            path[baseIndex]);
+
+                        // Insert new point at last position - 2 (pushes the next 2 items down)
+                        path.coordinates.insert(baseIndex - 1,_pointToLatLng(spline.percentage(50)));
+                    }
                 }
 
             } else {
                 restSteps += distance;
             }
-
         }
 
         // If last step is on the same position as the last generated step
@@ -129,6 +117,25 @@ class Path {
         if(baseStep.round() != tempCoordinates.last.round()) {
             path.add(tempCoordinates.last);
         }
+
+        int baseIndex = path.nrOfCoordinates - 1;
+        CatmullRomSpline2D<double> spline = _createSpline(
+            path[baseIndex - 3],
+            path[baseIndex - 2],
+            path[baseIndex - 1],
+            path[baseIndex - 0]);
+
+        path.coordinates.insert(baseIndex - 1,_pointToLatLng(spline.percentage(50)));
+
+        if(restSteps > stepDistance / 2) {
+            baseIndex = path.nrOfCoordinates - 1;
+            spline = _createSpline(
+                path[baseIndex - 1],path[baseIndex - 1],
+                path[baseIndex - 0],path[baseIndex - 0]);
+
+            path.coordinates.insert(baseIndex,_pointToLatLng(spline.percentage(50)));
+        }
+
         return path;
     }
 
@@ -195,5 +202,23 @@ class Path {
     ///     final LatLng p1 = path[0]; // p1 == startPos
     ///
     LatLng operator[](final int index) => _coordinates.elementAt(index);
+
+    //- private -----------------------------------------------------------------------------------
+
+    CatmullRomSpline2D<double> _createSpline(final LatLng p0,final LatLng p1,final LatLng p2,final LatLng p3) {
+        Validate.notNull(p0);
+        Validate.notNull(p1);
+        Validate.notNull(p2);
+        Validate.notNull(p3);
+
+        return new CatmullRomSpline2D(
+            new Point2D(p0.latitude,p0.longitude),
+            new Point2D(p1.latitude,p1.longitude),
+            new Point2D(p2.latitude,p2.longitude),
+            new Point2D(p3.latitude,p3.longitude)
+        );
+    }
+
+    LatLng _pointToLatLng(final Point2D point) => new LatLng(point.x,point.y);
 }
 
