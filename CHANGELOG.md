@@ -1,6 +1,11 @@
 # Change Log for latlong
 Lightweight library for common latitude and longitude calculation
 
+## [v0.3.1](http://github.com/mikemitterer/dart-latlong/compare/v0.3.0...v0.3.1) - 2016-02-03
+
+### Feature
+* Made Path more generic [ec42c04](https://github.com/mikemitterer/dart-latlong/commit/ec42c042cf9a7ec1d82e68a9458063713ec2b18b)
+
 ## [v0.3.0](http://github.com/mikemitterer/dart-latlong/compare/v0.2.1...v0.3.0) - 2016-01-29
 
 ### Feature
