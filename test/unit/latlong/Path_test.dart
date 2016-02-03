@@ -150,6 +150,8 @@ main() {
             expect(distance(westendorf.first,westendorf.last),209);
 
             final Path steps = path.equalize(5);
+            expect(steps.nrOfCoordinates,44);
+
             _exportForGoogleEarth(steps,show: false);
 
         }); // end of 'Reality Test - Westendorf, short' test
@@ -165,10 +167,12 @@ main() {
             expect(distance(zigzag.first,zigzag.last),190);
 
             final Path steps = path.equalize(8,smoothPath: true);
-            _exportForGoogleEarth(steps,show: false);
 
-            // 282 / 8 = 38 + first + last
-            expect(steps.coordinates.length, inInclusiveRange(36,38));
+            // 282 / 8 = 35,25 + first + last
+            expect(steps.nrOfCoordinates,36);
+            expect(steps.coordinates.length, inInclusiveRange(36,37));
+
+            _exportForGoogleEarth(steps,show: false);
 
             // Distance check makes no sense - path is shorter than the original one!
 

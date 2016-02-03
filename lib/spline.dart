@@ -27,11 +27,6 @@
 ///
 library spline;
 
-import 'dart:async';
-import 'dart:collection';
-
-import 'dart:math' as math;
-
 import 'package:validate/validate.dart';
 //import 'package:logging/logging.dart';
 

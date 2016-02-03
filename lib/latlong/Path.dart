@@ -19,35 +19,63 @@
 
 part of latlong;
 
+/// Necessary for creating new instances T extends LatLng (Path<T extends LatLng>)
+///
+///     class Location extends LatLng {
+///         ....
+///     }
+///
+///     final Path<Location> path = new Path<Location>(factory: locationFactory);
+///
+typedef LatLng LatLngFactory(final double latitude, final double longitude);
+
+LatLng _defaultLatLngFactory(final double latitude, final double longitude)
+    => new LatLng(latitude,longitude);
+
 /// Path of [LatLng] values
-class Path {
+///
+/// If you use [Path] with Generics - check out this sample:
+///
+///     class Location extends LatLng {
+///         ....
+///     }
+///
+///     final Path<Location> path = new Path<Location>(factory: locationFactory);
+///
+class Path<T extends LatLng> {
     final Logger _logger = new Logger('latlong.Path');
 
     /// Coordinates managed by this class
-    final List<LatLng> _coordinates;
+    final List<T> _coordinates;
 
     /// For [Distance] calculations
     final Distance _distance = const Distance();
 
-    Path() : _coordinates = new List<LatLng>();
+    final LatLngFactory _latLngFactory;
 
-    Path.from(final Iterable<LatLng> coordinates) : _coordinates = new List.from(coordinates) {
+    Path({ final LatLngFactory factory: _defaultLatLngFactory })
+        : _coordinates = new List<T>(), _latLngFactory = factory;
+
+    //TODO: Should be Iterable<T> but is not supported by Dart at the moment
+    Path.from(final Iterable/*<T>*/ coordinates, { final LatLngFactory factory: _defaultLatLngFactory })
+        : _coordinates = new List<T>.from(coordinates), _latLngFactory = factory {
+
         Validate.notNull(coordinates);
     }
 
-    List<LatLng> get coordinates => _coordinates;
+    List<T> get coordinates => _coordinates;
 
     /// Removes all coordinates from path
     void clear() => _coordinates.clear();
 
-    /// Add new [LatLng] coordinate to path
-    void add(final LatLng value) {
+    /// Add new [T] coordinate to path
+    void add(final T value) {
         Validate.notNull(value);
         return _coordinates.add(value);
     }
 
-    LatLng get first => _coordinates.first;
-    LatLng get last => _coordinates.last;
+    T get first => _coordinates.first;
+    T get last => _coordinates.last;
 
     /// Splits the path into even sections.
     ///
@@ -87,14 +115,14 @@ class Path {
             return new Path.from([ _coordinates.first, _coordinates.last ]);
         }
 
-        final List<LatLng> tempCoordinates = new List.from(_coordinates);
+        final List<T> tempCoordinates = new List.from(_coordinates);
         final Path path = new Path();
 
         double remainingSteps = 0.0;
         double bearing;
 
         path.add(tempCoordinates.first);
-        LatLng baseStep = tempCoordinates.first;
+        T baseStep = tempCoordinates.first;
 
         for(int index = 0;index < coordinates.length - 1;index++) {
             final double distance = _distance(tempCoordinates[index],tempCoordinates[index + 1]);
@@ -116,7 +144,9 @@ class Path {
 
                 for(int stepCounter = 0; stepCounter < fullSteps;stepCounter++) {
                     // Add step on the given path
-                    final LatLng nextStep = _distance.offset(baseStep,firstStepPos,bearing);
+                    // Intermediate step is necessary to stay type-safe
+                    final LatLng tempStep = _distance.offset(baseStep,firstStepPos,bearing);
+                    final T nextStep = _latLngFactory(tempStep.latitude,tempStep.longitude);
                     path.add(nextStep);
                     firstStepPos += stepDistance;
 
@@ -190,7 +220,7 @@ class Path {
     ///     print(path.length);
     ///
     num get distance {
-        final List<LatLng> tempCoordinates = new List.from(_coordinates);
+        final List<T> tempCoordinates = new List.from(_coordinates);
         double length = 0.0;
 
         for(int index = 0;index < coordinates.length - 1;index++) {
@@ -202,7 +232,7 @@ class Path {
     /// Calculates the center of a collection of geo coordinates
     ///
     /// The function rounds the result to 6 decimals
-    LatLng get center {
+    T get center {
         Validate.notEmpty(coordinates,"Coordinates must not be empty!");
 
         double X = 0.0;
@@ -211,7 +241,7 @@ class Path {
 
         double lat, lon, hyp;
 
-        coordinates.forEach( (final LatLng coordinate) {
+        coordinates.forEach( (final T coordinate) {
 
             lat = coordinate.latitudeInRad;
             lon = coordinate.longitudeInRad;
@@ -231,7 +261,7 @@ class Path {
         hyp = math.sqrt(X * X + Y * Y);
         lat = math.atan2(Z, hyp);
 
-        return new LatLng(round(radianToDeg(lat)),round(radianToDeg(lon)));
+        return _latLngFactory(round(radianToDeg(lat)),round(radianToDeg(lon)));
     }
 
     /// Returns the number of coordinates
@@ -246,12 +276,12 @@ class Path {
     ///     final Path path = new Path.from(<LatLng>[ startPos,endPos ]);
     ///     final LatLng p1 = path[0]; // p1 == startPos
     ///
-    LatLng operator[](final int index) => _coordinates.elementAt(index);
+    T operator[](final int index) => _coordinates.elementAt(index);
 
     //- private -----------------------------------------------------------------------------------
 
     /// 4 Points are necessary to create a [CatmullRomSpline2D]
-    CatmullRomSpline2D<double> _createSpline(final LatLng p0,final LatLng p1,final LatLng p2,final LatLng p3) {
+    CatmullRomSpline2D<double> _createSpline(final T p0,final T p1,final T p2,final T p3) {
         Validate.notNull(p0);
         Validate.notNull(p1);
         Validate.notNull(p2);
@@ -266,12 +296,6 @@ class Path {
     }
 
     /// Convert [Point2D] to [LatLng]
-    LatLng _pointToLatLng(final Point2D point) => new LatLng(point.x,point.y);
-
-    void _removeDuplicates() {
-        final Set<LatLng> temp = new Set<LatLng>.from(_coordinates);
-        _coordinates.clear();
-        _coordinates.addAll(temp);
-    }
+    T _pointToLatLng(final Point2D point) => _latLngFactory(point.x,point.y);
 }
 
