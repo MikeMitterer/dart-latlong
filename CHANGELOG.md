@@ -1,6 +1,11 @@
 # Change Log for latlong
 Lightweight library for common latitude and longitude calculation
 
+## [v0.3.2](http://github.com/mikemitterer/dart-latlong/compare/v0.3.1...v0.3.2) - 2016-02-04
+
+### Feature
+* Path.equalize excepts now a num instead of int [108431b](https://github.com/mikemitterer/dart-latlong/commit/108431ba9bcf326f4b551ea090c240be255315e6)
+
 ## [v0.3.1](http://github.com/mikemitterer/dart-latlong/compare/v0.3.0...v0.3.1) - 2016-02-03
 
 ### Feature
