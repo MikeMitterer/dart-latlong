@@ -74,6 +74,12 @@ class Path<T extends LatLng> {
         return _coordinates.add(value);
     }
 
+    /// Add all coordinates from [List<T>] to path
+    void addAll(final List<T> values) {
+        Validate.notNull(values);
+        return _coordinates.addAll(values);
+    }
+
     T get first => _coordinates.first;
     T get last => _coordinates.last;
 
@@ -81,7 +87,7 @@ class Path<T extends LatLng> {
     ///
     /// The section size is defined with [distanceInMeterPerTime].
     /// [distanceInMeterPerTime] means that the original size on the given
-    /// path will stay the same but the create section could be smaller because of the "linear distance"
+    /// path will stay the same but the created section could be smaller because of the "linear distance"
     ///
     /// However - if you follow the steps in a given time then the distance from point to point (over time)
     /// is correct. (Almost - because of the curves generate with [CatmullRomSpline2D]
@@ -90,8 +96,8 @@ class Path<T extends LatLng> {
     ///
     /// If [smoothPath] is turned on than the minimum of 3 coordinates is required otherwise
     /// we need two
-    Path equalize(final int distanceInMeterPerTime,{ final bool smoothPath: true }) {
-        Validate.isTrue(distanceInMeterPerTime > 1, "Distance must be greater than 1");
+    Path equalize(final num distanceInMeterPerTime,{ final bool smoothPath: true }) {
+        Validate.isTrue(distanceInMeterPerTime > 0, "Distance must be greater than 0");
         Validate.isTrue((smoothPath && _coordinates.length >= 3) ||
             (!smoothPath&& _coordinates.length >= 2),
                 "At least ${smoothPath ? 3 : 2} coordinates are needed to create the steps in between");
