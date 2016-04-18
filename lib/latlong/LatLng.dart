@@ -46,7 +46,6 @@ class LatLng {
     }
     double get longitude => _longitude;
 
-
     double get latitudeInRad => degToRadian(latitude);
 
     double get longitudeInRad => degToRadian(_longitude);
@@ -68,7 +67,8 @@ class LatLng {
 
     int get hashCode => latitude.hashCode + longitude.hashCode;
 
-    bool operator==(final LatLng other) => latitude == other.latitude && longitude == other.longitude;
+    bool operator==(final LatLng other)
+        => other is LatLng && latitude == other.latitude && longitude == other.longitude;
 
     LatLng round({ final int decimals: 6 })
         => new LatLng(_round(latitude,decimals: decimals), _round(longitude,decimals: decimals));

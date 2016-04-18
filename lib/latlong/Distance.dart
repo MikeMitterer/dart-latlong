@@ -114,6 +114,7 @@ class Distance implements DistanceCalculator {
     ///     final p1 = new LatLng(0.0, 0.0);
     ///     final p2 = distance.offset(p1, distanceInMeter, 180);
     ///
+    /// Bearing: Left - 270°, right - 90°, up - 0°, down - 180°
     @override
     LatLng offset(final LatLng from,final num distanceInMeter,final num bearing)
         => _calculator.offset(from,distanceInMeter.toDouble(),bearing.toDouble());
