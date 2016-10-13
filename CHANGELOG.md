@@ -1,6 +1,11 @@
 # Change Log for latlong
 Lightweight library for common latitude and longitude calculation
 
+## [v0.3.3](http://github.com/mikemitterer/dart-latlong/compare/v0.3.2...v0.3.3) - 2016-04-18
+
+### Docs
+* Better documentation [e9d453d](https://github.com/mikemitterer/dart-latlong/commit/e9d453d2b25ef8c8694b317882cf44ba50b5c028)
+
 ## [v0.3.2](http://github.com/mikemitterer/dart-latlong/compare/v0.3.1...v0.3.2) - 2016-02-04
 
 ### Feature

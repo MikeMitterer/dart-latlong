@@ -3,7 +3,7 @@ description: Lightweight library for common latitude and longitude calculation
 author: Mike Mitterer <office@mikemitterer.at>
 homepage: https://github.com/MikeMitterer/dart-latlong
 
-version: 0.3.2
+version: 0.3.3
 
 environment:
   sdk: ">=1.8.0 <2.0.0"
@@ -13,7 +13,7 @@ dependencies:
 
   logging: ^0.11.0
   logging_handlers: ^0.8.0
-  console_log_handler: ^0.1.0
+  console_log_handler: ^0.2.0
 
   validate: ^1.0.0
 
