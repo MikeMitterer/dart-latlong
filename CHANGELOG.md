@@ -1,6 +1,11 @@
 # Change Log for latlong
 Lightweight library for common latitude and longitude calculation
 
+## [v0.3.4](http://github.com/mikemitterer/dart-latlong/compare/v0.3.3...v0.3.4) - 2016-11-16
+
+### Docs
+* Strong-Mode support [86b858c](https://github.com/mikemitterer/dart-latlong/commit/86b858c8554bf9fcdda56ab33c247f34d8b17616)
+
 ## [v0.3.3](http://github.com/mikemitterer/dart-latlong/compare/v0.3.2...v0.3.3) - 2016-04-18
 
 ### Docs
