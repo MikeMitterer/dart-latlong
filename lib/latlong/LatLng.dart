@@ -67,7 +67,7 @@ class LatLng {
 
     int get hashCode => latitude.hashCode + longitude.hashCode;
 
-    bool operator==(final LatLng other)
+    bool operator==(final Object other)
         => other is LatLng && latitude == other.latitude && longitude == other.longitude;
 
     LatLng round({ final int decimals: 6 })

@@ -152,7 +152,7 @@ class Path<T extends LatLng> {
                     // Add step on the given path
                     // Intermediate step is necessary to stay type-safe
                     final LatLng tempStep = _distance.offset(baseStep,firstStepPos,bearing);
-                    final T nextStep = _latLngFactory(tempStep.latitude,tempStep.longitude);
+                    final LatLng nextStep = _latLngFactory(tempStep.latitude,tempStep.longitude);
                     path.add(nextStep);
                     firstStepPos += stepDistance;
 
@@ -238,7 +238,7 @@ class Path<T extends LatLng> {
     /// Calculates the center of a collection of geo coordinates
     ///
     /// The function rounds the result to 6 decimals
-    T get center {
+    LatLng get center {
         Validate.notEmpty(coordinates,"Coordinates must not be empty!");
 
         double X = 0.0;
@@ -287,7 +287,7 @@ class Path<T extends LatLng> {
     //- private -----------------------------------------------------------------------------------
 
     /// 4 Points are necessary to create a [CatmullRomSpline2D]
-    CatmullRomSpline2D<double> _createSpline(final T p0,final T p1,final T p2,final T p3) {
+    CatmullRomSpline2D<double> _createSpline(final LatLng p0,final LatLng p1,final LatLng p2,final LatLng p3) {
         Validate.notNull(p0);
         Validate.notNull(p1);
         Validate.notNull(p2);
@@ -302,6 +302,6 @@ class Path<T extends LatLng> {
     }
 
     /// Convert [Point2D] to [LatLng]
-    T _pointToLatLng(final Point2D point) => _latLngFactory(point.x,point.y);
+    LatLng _pointToLatLng(final Point2D point) => _latLngFactory(point.x,point.y);
 }
 

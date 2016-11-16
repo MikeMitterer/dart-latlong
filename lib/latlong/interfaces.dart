@@ -20,6 +20,6 @@
 part of latlong;
 
 abstract class DistanceCalculator {
-    double distance(final LatLng p1, final LatLng p2);
+    num distance(final LatLng p1, final LatLng p2);
     LatLng offset(final LatLng from,final double distanceInMeter,final double bearing);
 }

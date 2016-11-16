@@ -1,6 +1,6 @@
 import 'package:grinder/grinder.dart';
 
-main(args) => grind(args);
+main(final List<String> args) => grind(args);
 
 @DefaultTask()
 @Depends(test)

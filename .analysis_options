@@ -1,0 +1,16 @@
+# ------------------------------------------------------------------------------
+# Config for Analyzer
+#   More: https://pub.dartlang.org/packages/analyzer
+#
+# Analyzer options:
+#   https://www.dartlang.org/guides/language/analysis-options
+#
+
+analyzer:
+  strong-mode: true
+
+  # Exclude wegen https://github.com/dart-lang/sdk/issues/26420
+  # und https://github.com/dart-lang/test/issues/436
+
+  # exclude:
+  #   - test/**
