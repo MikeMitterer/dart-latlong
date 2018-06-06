@@ -45,6 +45,7 @@ import 'dart:math' as math;
 import 'package:latlong/spline.dart';
 import 'package:logging/logging.dart';
 import 'package:validate/validate.dart';
+import 'package:intl/intl.dart';
 
 part "latlong/interfaces.dart";
 
@@ -70,11 +71,15 @@ const double FLATTENING = 1 / 298.257223563;
 /// Earth radius in meter
 const double EARTH_RADIUS = EQUATOR_RADIUS;
 
+/// The PI constant.
+const double PI = math.pi;
+
+
 /// Converts degree to radian
-double degToRadian(final double deg) => deg * (math.PI / 180.0);
+double degToRadian(final double deg) => deg * (PI / 180.0);
 
 /// Radian to degree
-double radianToDeg(final double rad) => rad * (180.0 / math.PI);
+double radianToDeg(final double rad) => rad * (180.0 / PI);
 
 /// Rounds [value] to given number of [decimals]
 double round(final double value, { final int decimals: 6 })
@@ -91,7 +96,9 @@ double normalizeBearing(final double bearing) => (bearing + 360) % 360;
 ///
 String decimal2sexagesimal(final double dec) {
     List<int> _split(final double value) {
-        final List<String> tmp = round(value,decimals: 10).toString().split('.');
+        // NumberFormat is necessary to create digit after comma if the value
+        // has no decimal point (only necessary for browser)
+        final List<String> tmp = new NumberFormat("0.0#####").format(round(value,decimals: 10)).split('.');
         return <int>[ int.parse(tmp[0]).abs(), int.parse(tmp[1])];
     }
 

@@ -31,13 +31,13 @@ main() {
 
         test('> Range', () {
             expect(() => new LatLng(-80.0, 0.0), returnsNormally);
-            expect(() => new LatLng(-100.0, 0.0), throws);
+            expect(() => new LatLng(-100.0, 0.0), throwsArgumentError);
             expect(() => new LatLng(80.0, 0.0), returnsNormally);
-            expect(() => new LatLng(100.0, 0.0), throws);
+            expect(() => new LatLng(100.0, 0.0), throwsArgumentError);
             expect(() => new LatLng(0.0, -170.0), returnsNormally);
-            expect(() => new LatLng(0.0, -190.0), throws);
+            expect(() => new LatLng(0.0, -190.0), throwsArgumentError);
             expect(() => new LatLng(0.0, 170.0), returnsNormally);
-            expect(() => new LatLng(0.0, 190.0), throws);
+            expect(() => new LatLng(0.0, 190.0), throwsArgumentError);
         }); // end of 'Range' test
 
         test('> Rad', () {
@@ -49,6 +49,7 @@ main() {
 
         test('> toString', () {
             expect((new LatLng(-80.0, 0.0)).toString(), "LatLng(latitude:-80.0, longitude:0.0)");
+            expect((new LatLng(-80.123456, 0.0)).toString(), "LatLng(latitude:-80.123456, longitude:0.0)");
         }); // end of 'toString' test
 
         test('> equal', () {

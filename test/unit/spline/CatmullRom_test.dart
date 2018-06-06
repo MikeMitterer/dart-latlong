@@ -73,7 +73,7 @@ main() async {
                 new Point2D(2,2)
             );
 
-            expect(() => spline.position(3.0).x,throws);
+            expect(() => spline.position(3.0).x,throwsArgumentError);
 
         }); // end of 'Exception' test
 

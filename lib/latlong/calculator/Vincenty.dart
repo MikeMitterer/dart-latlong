@@ -117,7 +117,7 @@ class Vincenty implements DistanceCalculator {
         final double b = dfUSq / 1024 * (256 + dfUSq * (-128 + dfUSq * (74 - 47 * dfUSq)));
 
         double sigma = distanceInMeter / (polarRadius * a);
-        double sigmaP = 2 * math.PI;
+        double sigmaP = 2 * PI;
 
         double sinSigma = 0.0;
         double cosSigma = 0.0;
@@ -155,11 +155,11 @@ class Vincenty implements DistanceCalculator {
         double lon2 = longitude + l;
         // print("LA ${radianToDeg(lat2)}, LO ${radianToDeg(lon2)}");
 
-        if (lon2 > math.PI) {
-            lon2 = lon2 - 2 * math.PI;
+        if (lon2 > PI) {
+            lon2 = lon2 - 2 * PI;
         }
-        if (lon2 < -1 * math.PI) {
-            lon2 = lon2 + 2 * math.PI;
+        if (lon2 < -1 * PI) {
+            lon2 = lon2 + 2 * PI;
         }
 
         return new LatLng(radianToDeg(lat2), radianToDeg(lon2));

@@ -9,8 +9,6 @@ environment:
   sdk: ">=1.8.0 <2.0.0"
 
 dependencies:
-  browser: ^0.10.0
-
   logging: '>=0.11.3 <1.0.0'
   console_log_handler: '>=0.5.0 <1.0.0'
     # git: git@github.com:MikeMitterer/dart-console_log_handler.git
@@ -18,6 +16,11 @@ dependencies:
 
   validate: ^1.0.0
 
+  intl: '>=0.15.0 <1.0.0'
+
 dev_dependencies:
   test: any
-  grinder: any
+
+  build_runner: ^0.8.0
+  build_test: ^0.10.0
+  build_web_compilers: ^0.4.0

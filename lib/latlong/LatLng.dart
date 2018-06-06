@@ -50,7 +50,8 @@ class LatLng {
 
     double get longitudeInRad => degToRadian(_longitude);
 
-    String toString() => 'LatLng(latitude:$latitude, longitude:$longitude)';
+    String toString() => 'LatLng(latitude:${new NumberFormat("0.0#####").format(latitude)}, '
+        'longitude:${new NumberFormat("0.0#####").format(longitude)})';
 
     /// Converts lat/long values into sexagesimal
     ///

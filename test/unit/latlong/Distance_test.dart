@@ -1,6 +1,5 @@
 //@TestOn("content-shell")
 import 'package:test/test.dart';
-import 'dart:math' as math;
 
 // import 'package:logging/logging.dart';
 import 'package:latlong/latlong.dart';
@@ -127,7 +126,7 @@ main() {
         test('offset from 0,0 with bearing 0 and distance 10018.754 km is 90,180',(){
             final Distance distance = const Distance();
 
-            final num distanceInMeter = (EARTH_RADIUS * math.PI / 2).round();
+            final num distanceInMeter = (EARTH_RADIUS * PI / 2).round();
             //print("Dist $distanceInMeter");
 
             final p1 = new LatLng(0.0, 0.0);
@@ -142,7 +141,7 @@ main() {
 
         test('offset from 0,0 with bearing 180 and distance ~ 5.000 km is -45,0',(){
             final Distance distance = const Distance();
-            final num distanceInMeter = (EARTH_RADIUS * math.PI / 4).round();
+            final num distanceInMeter = (EARTH_RADIUS * PI / 4).round();
 
             final p1 = new LatLng(0.0, 0.0);
             final p2 = distance.offset(p1, distanceInMeter, 180);
@@ -156,7 +155,7 @@ main() {
 
         test('offset from 0,0 with bearing 180 and distance ~ 10.000 km is -90,180',(){
             final Distance distance = const Distance();
-            final num distanceInMeter = (EARTH_RADIUS * math.PI / 2).round();
+            final num distanceInMeter = (EARTH_RADIUS * PI / 2).round();
 
             final p1 = new LatLng(0.0, 0.0);
             final p2 = distance.offset(p1, distanceInMeter, 180);
@@ -167,7 +166,7 @@ main() {
 
         test('offset from 0,0 with bearing 90 and distance ~ 5.000 km is 0,45',(){
             final Distance distance = const Distance();
-            final num distanceInMeter = (EARTH_RADIUS * math.PI / 4).round();
+            final num distanceInMeter = (EARTH_RADIUS * PI / 4).round();
 
             final p1 = new LatLng(0.0, 0.0);
             final p2 = distance.offset(p1, distanceInMeter, 90);
