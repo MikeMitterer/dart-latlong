@@ -1,14 +1,18 @@
 //@TestOn("content-shell")
 import 'package:test/test.dart';
 
-// import 'package:logging/logging.dart';
 import 'package:latlong/latlong.dart';
+// import 'package:logging/logging.dart';
 
-import '../config.dart';
+// Browser
+// import "package:console_log_handler/console_log_handler.dart";
+
+// Commandline
+// import "package:console_log_handler/print_log_handler.dart";
 
 main() {
-    // final Logger _logger = new Logger("test.Compute");
-    configLogging();
+    // final Logger _logger = new Logger("test.Distance");
+    // configLogging();
 
     group('Distance', () {
         setUp(() { });

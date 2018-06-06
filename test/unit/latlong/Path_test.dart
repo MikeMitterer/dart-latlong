@@ -4,7 +4,11 @@ import 'package:test/test.dart';
 import 'package:latlong/latlong.dart';
 // import 'package:logging/logging.dart';
 
-import '../config.dart';
+// Browser
+// import "package:console_log_handler/console_log_handler.dart";
+
+// Commandline
+// import "package:console_log_handler/print_log_handler.dart";
 
 final Map<String,LatLng> cities = <String,LatLng> {
     "berlin" : new LatLng(52.518611,13.408056),
@@ -71,8 +75,7 @@ final List<LatLng> zigzag = <LatLng>[
 
 main() {
     // final Logger _logger = new Logger("test.Utils");
-    
-    configLogging();
+    // configLogging();
 
     group('Equalize path', () {
 
