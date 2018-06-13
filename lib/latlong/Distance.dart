@@ -94,9 +94,9 @@ class Distance implements DistanceCalculator {
     double bearing(final LatLng p1, final LatLng p2) {
         final diffLongitude = p2.longitudeInRad - p1.longitudeInRad;
 
-        final y = math.sin(diffLongitude) * math.cos(p2.latitudeInRad);
-        final x = math.cos(p1.latitudeInRad) * math.sin(p2.latitudeInRad) -
-            math.sin(p1.latitudeInRad) * math.cos(p2.latitudeInRad) * math.cos(diffLongitude);
+        final y = math.sin(diffLongitude);
+        final x = math.cos(p1.latitudeInRad) * math.tan(p2.latitudeInRad) -
+            math.sin(p1.latitudeInRad) * math.cos(diffLongitude);
 
         return radianToDeg(math.atan2(y, x));
     }
