@@ -56,8 +56,7 @@ class Path<T extends LatLng> {
     Path({ final LatLngFactory factory: _defaultLatLngFactory })
         : _coordinates = new List<T>(), _latLngFactory = factory;
 
-    //TODO: Should be Iterable<T> but is not supported by Dart at the moment
-    Path.from(final Iterable/*<T>*/ coordinates, { final LatLngFactory factory: _defaultLatLngFactory })
+    Path.from(final Iterable<T> coordinates, { final LatLngFactory factory: _defaultLatLngFactory })
         : _coordinates = new List<T>.from(coordinates), _latLngFactory = factory {
 
         Validate.notNull(coordinates);

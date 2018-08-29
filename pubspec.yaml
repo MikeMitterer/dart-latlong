@@ -6,11 +6,11 @@ homepage: https://github.com/MikeMitterer/dart-latlong
 version: 0.5.3
 
 environment:
-  sdk: ">=1.8.0 <2.0.0"
+  sdk: ">=2.0.0 <3.0.0"
 
 dependencies:
   logging: '>=0.11.3 <1.0.0'
-  console_log_handler: '>=0.5.0 <1.0.0'
+  console_log_handler: '>=1.1.0 <2.0.0'
     # git: git@github.com:MikeMitterer/dart-console_log_handler.git
     # path: /Volumes/Daten/DevLocal/DevDart/ConsoleLogHandler
 
@@ -21,6 +21,6 @@ dependencies:
 dev_dependencies:
   test: any
 
-  build_runner: ^0.8.0
-  build_test: ^0.10.0
-  build_web_compilers: ^0.4.0
+  build_runner: any
+  build_test: any
+  build_web_compilers: any
