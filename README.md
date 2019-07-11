@@ -1,13 +1,13 @@
-# LatLong provides a lightweight library for common latitude and longitude calculation.
+# DEPRECATED
 
 ---
-## This package will not be maintained anymore!
+# This package will not be maintained anymore!
 The whole thing landed on **TypeScript**  
 
 Check out the lib on [npmjs](https://www.npmjs.com/package/@mmit/latlong)
 
 ---
-
+## LatLong provides a lightweight library for common latitude and longitude calculation.
 This library supports both, the "Haversine" and the "Vincenty" algorithm.
 
 "Haversine" is a bit faster but "Vincenty" is far more accurate!
